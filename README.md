@@ -16,7 +16,7 @@ Este directorio contiene los datos/archivos de prueba para cada uno de los retos
 -Docs
 Este directorio tiene documentos anexos al proyecto donde se explican decisiones de diseño, análisis de algoritmos y en general información asociada al código desarrollado por cada grupo
 
--Lib
+-DiscLib
 Este directorio contiene todo el código de base que se entrega para el funcionamiento del curso.  Dentro de este directorio encuentran:
     
     |-- ADT:  Directorio con los Tipos Abstractos de Datos del curso
@@ -27,6 +27,4 @@ Este directorio contiene todo el código de base que se entrega para el funciona
 
     |-- Utils: Funciones auxiliares para el funcionamiento de los TADs y estructuras de datos
 
--Test
-Este directorio contiene las pruebas realizadas a los TADs, Estructuras de Datos y Algoritmos.
 

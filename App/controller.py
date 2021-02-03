@@ -23,7 +23,6 @@
 import config as cf
 import model
 import csv
-from DISClib.ADT import list as lt
 
 
 """
@@ -31,22 +30,29 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-# Funcionaes utilitarias
+# Inicialización del Catálogo de libros
 
-def loadCSVFile(file, lst):
-    input_file = csv.DictReader(open(file))
-    for row in input_file:
-        lt.addLast(lst, row)
-
-
-def printList(lst):
-    for element in lt.iterator(lst):
-        result = "".join(str(key) + ": " + str(value) +
-                         ",  " for key, value in element.items())
-        print(result)
+def initCatalog():
+    """
+    Llama la funcion de inicializacion del catalogo del modelo.
+    """
+    catalog = model.newCatalog()
+    return catalog
 
 
 # Funciones para la carga de datos
+
+
+def loadData(catalog):
+    """
+    Carga los datos de los archivos y cargar los datos en la
+    estructura de datos
+    """
+    loadBooks(catalog)
+    loadTags(catalog)
+    loadBooksTags(catalog)
+    sortBooks(catalog)
+
 
 def loadBooks(catalog):
     """
@@ -57,18 +63,7 @@ def loadBooks(catalog):
     booksfile = cf.data_dir + 'GoodReads/books-small.csv'
     input_file = csv.DictReader(open(booksfile))
     for book in input_file:
-        # Se adiciona el libro a la lista de libros
-        lt.addLast(catalog['books'], book)
-        # Se obtienen los autores del libro
-        authors = book['authors'].split(",")
-        # Cada autor, se crea en la lista de libros del catalogo, y se
-        # crea un libro en la lista de dicho autor (apuntador al libro)
-        for author in authors:
-            model.addBookAuthor(catalog, author.strip(), book)
-
-
-def sortBooks(catalog):
-    model.sortBooks(catalog)
+        model.addBook(catalog, book)
 
 
 def loadTags(catalog):
@@ -84,8 +79,6 @@ def loadTags(catalog):
 def loadBooksTags(catalog):
     """
     Carga la información que asocia tags con libros.
-    Primero se localiza el tag y se le agrega la información leida.
-    Adicionalmente se le agrega una referencia al libro procesado.
     """
     booktagsfile = cf.data_dir + 'GoodReads/book_tags.csv'
     input_file = csv.DictReader(open(booktagsfile))
@@ -93,49 +86,35 @@ def loadBooksTags(catalog):
         model.addBookTag(catalog, booktag)
 
 
-def initCatalog():
+# Funciones de ordenamiento
+
+def sortBooks(catalog):
     """
-    Llama la funcion de inicializacion del catalogo del modelo.
+    Ordena los libros por average_rating
     """
-    catalog = model.newCatalog()
-    return catalog
+    model.sortBooks(catalog)
 
 
-def loadData(catalog):
-    """
-    Carga los datos de los archivos y cargar los datos en la
-    estructura de datos
-    """
-    loadBooks(catalog)
-    sortBooks(catalog)
-    loadTags(catalog)
-    loadBooksTags(catalog)
-
-
-# Funciones llamadas desde la vista y enviadas al modelo
+# Funciones de consulta sobre el catálogo
 
 def getBooksByAuthor(catalog, authorname):
+    """
+    Retrona los libros de un autor
+    """
     author = model.getBooksByAuthor(catalog, authorname)
     return author
 
 
 def getBestBooks(catalog, number):
-    books = catalog['books']
-    bestbooks = lt.newList()
-    for cont in range(1, number+1):
-        book = lt.getElement(books, cont)
-        lt.addLast(bestbooks, book)
+    """
+    Retorna los mejores libros
+    """
+    bestbooks = model.getBestBooks(catalog, number)
     return bestbooks
 
 
 def countBooksByTag(catalog, tag):
-    tags = catalog['tags']
-    bookcount = 0
-    pos = lt.isPresent(tags, tag)
-    if pos > 0:
-        tag_element = lt.getElement(tags, pos)
-        if tag_element is not None:
-            for book_tag in lt.iterator(catalog['book_tags']):
-                if tag_element['tag_id'] == book_tag['tag_id']:
-                    bookcount += 1
-    return bookcount
+    """
+    Retorna los libros que fueron etiquetados con el tag
+    """
+    return model.countBooksByTag(catalog, tag)

@@ -79,6 +79,7 @@ def printBestBooks(books):
     else:
         print('No se encontraron libros')
 
+catalog = None
 
 """
 Menu principal

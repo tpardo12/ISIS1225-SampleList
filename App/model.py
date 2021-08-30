@@ -191,7 +191,11 @@ def compareratings(book1, book2):
 
 
 def comparetagnames(name, tag):
-    return (name == tag['name'])
+    if (name == tag['name']):
+        return 0
+    elif (name > tag['name']):
+        return 1
+    return -1
 
 
 # Funciones de ordenamiento
